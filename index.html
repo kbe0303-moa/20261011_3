@@ -1,0 +1,693 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부산고등학교 급식정보</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 25px 15px;
+    font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    background: linear-gradient(135deg, #edf4ff, #e5f7ed);
+    color: #24324a;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 850px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .header h1 {
+    margin: 0 0 12px;
+    font-size: 32px;
+    color: #254880;
+  }
+
+  .header p {
+    color: #66758b;
+    font-size: 16px;
+  }
+
+  .panel {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 25px rgba(30, 60, 100, 0.08);
+    margin-bottom: 22px;
+  }
+
+  .date-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 17px;
+  }
+
+  .date-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="date"] {
+    flex: 1;
+    min-width: 170px;
+    padding: 13px;
+    border: 2px solid #d9e4f2;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #253858;
+    background: white;
+  }
+
+  button {
+    border: none;
+    padding: 13px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .search-btn {
+    background: #315de0;
+    color: white;
+  }
+
+  .move-btn {
+    background: #e8eefc;
+    color: #3051a6;
+  }
+
+  .today-btn {
+    background: #e5f6ef;
+    color: #167856;
+  }
+
+  .move-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .selected-date {
+    font-size: 22px;
+    font-weight: bold;
+    color: #253b61;
+    margin-bottom: 12px;
+  }
+
+  .status {
+    text-align: center;
+    padding: 26px;
+    color: #64748b;
+    background: white;
+    border-radius: 16px;
+    line-height: 1.7;
+  }
+
+  .meal-card {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 18px rgba(40,70,110,0.07);
+    border-left: 6px solid #3b82f6;
+  }
+
+  .meal-card.breakfast {
+    border-left-color: #f59e0b;
+  }
+
+  .meal-card.lunch {
+    border-left-color: #22a06b;
+  }
+
+  .meal-card.dinner {
+    border-left-color: #8b5cf6;
+  }
+
+  .meal-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .meal-heading h2 {
+    margin: 0;
+    font-size: 23px;
+  }
+
+  .calorie {
+    background: #eff5ff;
+    color: #2855b5;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .menu-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .menu-item {
+    background: #f6f8fc;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .allergy {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #dc7041;
+    font-weight: normal;
+  }
+
+  .details {
+    margin-top: 18px;
+    border-top: 1px solid #e5eaf2;
+    padding-top: 15px;
+  }
+
+  details summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #4267a5;
+    padding: 8px 0;
+  }
+
+  .detail-content {
+    margin-top: 10px;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 14px;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.9;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  .footer {
+    text-align: center;
+    margin: 25px 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 600px) {
+    .header h1 {
+      font-size: 25px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .date-controls {
+      flex-direction: column;
+    }
+
+    input[type="date"],
+    .search-btn {
+      width: 100%;
+    }
+
+    .meal-card {
+      padding: 18px;
+    }
+
+    .menu-list {
+      grid-template-columns: 1fr;
+    }
+
+    .meal-heading h2 {
+      font-size: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <h1>🍱 부산고등학교 급식정보</h1>
+    <p>오늘은 어떤 맛있는 급식이 나올까요?</p>
+  </header>
+
+  <section class="panel">
+
+    <div class="date-title">📅 급식 조회 날짜</div>
+
+    <div class="date-controls">
+      <input type="date" id="mealDate">
+
+      <button class="search-btn" id="searchBtn">
+        🔍 급식 조회
+      </button>
+    </div>
+
+    <div class="move-controls">
+      <button class="move-btn" id="prevBtn">
+        ◀ 이전 날짜
+      </button>
+
+      <button class="today-btn" id="todayBtn">
+        오늘
+      </button>
+
+      <button class="move-btn" id="nextBtn">
+        다음 날짜 ▶
+      </button>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <div class="selected-date" id="selectedDate"></div>
+    <div id="mealResult" aria-live="polite">
+      <div class="status">
+        급식 정보를 불러오는 중입니다.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    데이터 제공: 나이스(NEIS) 교육정보 개방포털
+    <br>
+    식단 정보는 학교의 등록 및 변경 상황에 따라 달라질 수 있습니다.
+  </footer>
+
+</div>
+
+<script>
+  // ==========================================
+  // 1. API 기본 설정
+  // ==========================================
+
+  const API_URL =
+    "https://open.neis.go.kr/hub/mealServiceDietInfo";
+
+  const OFFICE_CODE = "T10";
+  const SCHOOL_CODE = "9290083";
+
+  const dateInput = document.getElementById("mealDate");
+  const mealResult = document.getElementById("mealResult");
+  const selectedDate = document.getElementById("selectedDate");
+  const searchBtn = document.getElementById("searchBtn");
+
+  let activeController = null;
+
+  // ==========================================
+  // 2. 날짜 관련 함수
+  // ==========================================
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  function apiDate(value) {
+    return value.replaceAll("-", "");
+  }
+
+  function displayDate(value) {
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+
+    const weekday = [
+      "일", "월", "화", "수", "목", "금", "토"
+    ][date.getDay()];
+
+    return `${year}년 ${month}월 ${day}일 (${weekday})`;
+  }
+
+  function changeDate(days) {
+    if (!dateInput.value) return;
+
+    const [y, m, d] = dateInput.value.split("-").map(Number);
+    const date = new Date(y, m - 1, d + days);
+
+    dateInput.value = formatDate(date);
+    fetchMeal();
+  }
+
+  // ==========================================
+  // 3. XML 처리 함수
+  // ==========================================
+
+  function getXMLText(parent, tagName) {
+    const element = parent.getElementsByTagName(tagName)[0];
+
+    if (!element) return "";
+
+    return element.textContent.trim();
+  }
+
+  function splitXMLLines(value) {
+    return value
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/&lt;br\s*\/?&gt;/gi, "\n")
+      .split(/\n/)
+      .map(item => item.trim())
+      .filter(Boolean);
+  }
+
+  function parseXML(xmlText) {
+    const parser = new DOMParser();
+
+    const xml = parser.parseFromString(
+      xmlText,
+      "application/xml"
+    );
+
+    if (xml.getElementsByTagName("parsererror").length) {
+      throw new Error("XML 문서를 해석할 수 없습니다.");
+    }
+
+    const rows = Array.from(
+      xml.getElementsByTagName("row")
+    );
+
+    if (rows.length === 0) {
+      const code = getXMLText(xml, "CODE");
+      const message = getXMLText(xml, "MESSAGE");
+
+      if (code === "INFO-200") {
+        return [];
+      }
+
+      if (code && code !== "INFO-000") {
+        throw new Error(
+          message || `API 오류 코드: ${code}`
+        );
+      }
+
+      return [];
+    }
+
+    return rows.map(row => ({
+      schoolName: getXMLText(row, "SCHUL_NM"),
+      mealType: getXMLText(row, "MMEAL_SC_NM"),
+      mealCode: getXMLText(row, "MMEAL_SC_CODE"),
+      date: getXMLText(row, "MLSV_YMD"),
+      menu: getXMLText(row, "DDISH_NM"),
+      calories: getXMLText(row, "CAL_INFO"),
+      nutrition: getXMLText(row, "NTR_INFO"),
+      origin: getXMLText(row, "ORPLC_INFO")
+    }));
+  }
+
+  // ==========================================
+  // 4. 출력에 사용할 요소 생성
+  // ==========================================
+
+  function makeElement(tag, className, text) {
+    const element = document.createElement(tag);
+
+    if (className) element.className = className;
+
+    if (text !== undefined) {
+      element.textContent = text;
+    }
+
+    return element;
+  }
+
+  function showStatus(message) {
+    mealResult.replaceChildren(
+      makeElement("div", "status", message)
+    );
+  }
+
+  function createDetail(title, content) {
+    if (!content) return null;
+
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    const body = makeElement("div", "detail-content");
+
+    summary.textContent = title;
+    body.textContent = splitXMLLines(content).join("\n");
+
+    details.append(summary, body);
+
+    return details;
+  }
+
+  // ==========================================
+  // 5. 급식 카드 생성
+  // ==========================================
+
+  function createMealCard(meal) {
+    const type = meal.mealCode === "1"
+      ? "breakfast"
+      : meal.mealCode === "3"
+      ? "dinner"
+      : "lunch";
+
+    const icon = {
+      breakfast: "🌅",
+      lunch: "🍚",
+      dinner: "🌙"
+    }[type];
+
+    const card = makeElement("article", `meal-card ${type}`);
+
+    const heading = makeElement("div", "meal-heading");
+    const title = makeElement(
+      "h2",
+      "",
+      `${icon} ${meal.mealType || "급식"}`
+    );
+
+    const calorie = makeElement(
+      "span",
+      "calorie",
+      meal.calories || "열량 정보 없음"
+    );
+
+    heading.append(title, calorie);
+    card.appendChild(heading);
+
+    const menuList = makeElement("div", "menu-list");
+
+    const menus = splitXMLLines(meal.menu);
+
+    menus.forEach(menu => {
+      const item = makeElement("div", "menu-item");
+
+      // 메뉴 끝에 붙은 알레르기 번호 분리
+      const match = menu.match(
+        /^(.*?)(\s*\(?\d+(?:\.\d+)*\.?\)?)$/
+      );
+
+      if (match && match[1].trim()) {
+        const menuName = match[1].trim();
+        const allergyNumbers = match[2].trim();
+
+        item.appendChild(
+          makeElement("span", "", menuName)
+        );
+
+        item.appendChild(
+          makeElement(
+            "span",
+            "allergy",
+            `알레르기 표시: ${allergyNumbers}`
+          )
+        );
+      } else {
+        item.textContent = menu;
+      }
+
+      menuList.appendChild(item);
+    });
+
+    if (menus.length === 0) {
+      menuList.appendChild(
+        makeElement("div", "menu-item", "메뉴 정보 없음")
+      );
+    }
+
+    card.appendChild(menuList);
+
+    const detailsBox = makeElement("div", "details");
+
+    const nutrition = createDetail(
+      "📊 영양정보 자세히 보기",
+      meal.nutrition
+    );
+
+    const origin = createDetail(
+      "🌾 식재료 원산지 보기",
+      meal.origin
+    );
+
+    if (nutrition) detailsBox.appendChild(nutrition);
+    if (origin) detailsBox.appendChild(origin);
+
+    if (detailsBox.childElementCount > 0) {
+      card.appendChild(detailsBox);
+    }
+
+    return card;
+  }
+
+  // ==========================================
+  // 6. API 조회 및 화면 표시
+  // ==========================================
+
+  async function fetchMeal() {
+    const selected = dateInput.value;
+
+    if (!selected) {
+      showStatus("조회할 날짜를 선택해 주세요.");
+      return;
+    }
+
+    // 이전 요청이 진행 중이라면 취소
+    if (activeController) {
+      activeController.abort();
+    }
+
+    const controller = new AbortController();
+    activeController = controller;
+
+    searchBtn.disabled = true;
+    selectedDate.textContent = displayDate(selected);
+    showStatus("🍽️ 급식 정보를 조회하고 있습니다...");
+
+    const params = new URLSearchParams({
+      ATPT_OFCDC_SC_CODE: OFFICE_CODE,
+      SD_SCHUL_CODE: SCHOOL_CODE,
+      MLSV_YMD: apiDate(selected)
+    });
+
+    const url = `${API_URL}?${params.toString()}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        signal: controller.signal
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP 오류: ${response.status}`);
+      }
+
+      const xmlText = await response.text();
+
+      const meals = parseXML(xmlText);
+
+      if (meals.length === 0) {
+        showStatus(
+          "📭 해당 날짜의 급식 정보가 없습니다.\n" +
+          "주말, 공휴일, 방학 또는 미등록일 수 있습니다."
+        );
+        return;
+      }
+
+      // 조식 → 중식 → 석식 순으로 정렬
+      meals.sort(
+        (a, b) =>
+          Number(a.mealCode) - Number(b.mealCode)
+      );
+
+      const fragment = document.createDocumentFragment();
+
+      meals.forEach(meal => {
+        fragment.appendChild(createMealCard(meal));
+      });
+
+      mealResult.replaceChildren(fragment);
+
+    } catch (error) {
+      if (error.name === "AbortError") return;
+
+      console.error("급식 조회 오류:", error);
+
+      showStatus(
+        "⚠️ 급식정보를 가져오지 못했습니다.\n" +
+        error.message +
+        "\n학교 코드, 인터넷 연결 또는 CORS 설정을 확인해 주세요."
+      );
+
+    } finally {
+      if (activeController === controller) {
+        activeController = null;
+        searchBtn.disabled = false;
+      }
+    }
+  }
+
+  // ==========================================
+  // 7. 버튼 이벤트
+  // ==========================================
+
+  searchBtn.addEventListener("click", fetchMeal);
+
+  dateInput.addEventListener("change", fetchMeal);
+
+  document.getElementById("todayBtn")
+    .addEventListener("click", () => {
+      dateInput.value = formatDate(new Date());
+      fetchMeal();
+    });
+
+  document.getElementById("prevBtn")
+    .addEventListener("click", () => changeDate(-1));
+
+  document.getElementById("nextBtn")
+    .addEventListener("click", () => changeDate(1));
+
+  // 처음 실행하면 오늘 날짜 자동 조회
+  dateInput.value = formatDate(new Date());
+  fetchMeal();
+
+</script>
+
+</body>
+</html>
